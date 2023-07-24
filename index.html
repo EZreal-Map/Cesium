@@ -82,8 +82,6 @@
                 const lines = data.split('\n');
                 for (const line of lines) {
                     const [longitude, latitude, height] = line.split(',');
-
-
                     // 创建点数据几何对象
                     if (Number(height) >= 1) {
                         var pos = Cesium.Cartographic.fromDegrees(longitude, latitude);
