@@ -2,16 +2,20 @@
 <html>
 
 <head>
-    <title>Cesium007-entity</title>
+    <title>张家板桥</title>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
     <link rel="stylesheet" type="text/css" href="./Cesium-1.96/Build/Cesium/Widgets/widgets.css">
     <script type="text/javascript" src="./Cesium-1.96/Build/Cesium/Cesium.js"></script>
     <style>
-        div,
-        body {
-            padding: 0;
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
             margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
 
         .cesium-widget-credits {
@@ -56,8 +60,6 @@
         //     }))
         // )
 
-
-        // viewer.terrainProvider =Cesium.createWorldTerrain();
         viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
             url: "./terrain/",
         })
@@ -71,27 +73,48 @@
                 roll: 0.0 // 指定翻滚角度
             }
         })
-        var pos1 = Cesium.Cartographic.fromDegrees(114.22268842439114, 38.134979272096594);
-        var pos2 = Cesium.Cartographic.fromDegrees(114.5199580178976, 38.1139391070047);
-        console.log(pos1, pos2);
-        window.setInterval(function () {
-            Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, [pos1, pos2]).then(updates => {
-                console.log(updates);
-            })
-        }, 10000)
 
 
+        // 读取center1.txt文件并加载数据为点数据几何对象
+        fetch('./flood/clearcenter1.txt')
+            .then(response => response.text())
+            .then(data => {
+                const lines = data.split('\n');
+                for (const line of lines) {
+                    const [longitude, latitude, height] = line.split(',');
 
-        viewer.camera.setView({
-            destination: Cesium.Cartesian3.fromDegrees(114, 38, 1000000),	//相机（眼睛）位置  不是地图位置
-            //相机的姿态
-            orientation: {
-                heading: Cesium.Math.toRadians(0.0), // 朝向
-                pitch: Cesium.Math.toRadians(-90),    // 俯仰
-                roll: 0.0                            //滚转                       
-            },
-            duration: 5
-        });
+
+                    // 创建点数据几何对象
+                    if (Number(height) >= 1) {
+                        var pos = Cesium.Cartographic.fromDegrees(longitude, latitude);
+                        Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, [pos]).then(updates => {
+                            console.log(updates);
+                            const point = viewer.entities.add({
+                                position: Cesium.Cartesian3.fromDegrees(Number(longitude), Number(latitude), Number(height) + updates[0]['height']),
+                                point: {
+                                    pixelSize: 1,
+                                    color: Cesium.Color.RED,
+                                    // outlineColor: Cesium.Color.WHITE,
+                                    // outlineWidth: 2
+                                },
+                                // 设置高度参考为相对于地形表面
+                                heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+                            });
+                        })
+                    }
+                    // 可以根据需要给每个点添加其他属性或操作
+                    // point.name = 'Some name';
+                    // point.description = 'Some description';
+                }
+            });
+        // var pos1 = Cesium.Cartographic.fromDegrees(113.39811, 31.699212);
+        // var pos2 = Cesium.Cartographic.fromDegrees(113.39811, 31.699212);
+        // console.log(pos1, pos2);
+        // window.setInterval(function () {
+        //     Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, [pos1, pos2]).then(updates => {
+        //         console.log(updates);
+        //     })
+        // }, 1000)
 
     </script>
 </body>
