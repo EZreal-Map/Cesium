@@ -1,3 +1,5 @@
+#  清除
+
 def read_and_filter_data(input_file, output_file, threshold):
     kept_data = []
     deleted_data = []

@@ -75,6 +75,14 @@
         })
 
 
+        // 生成Cesium颜色渐变数组，从浅蓝色到深蓝色
+        const numSegments = 9;
+        const startColor = "rgb(149, 208, 238)";
+        const endColor = "rgb(10,9,145)";
+
+        const colorGradient = generateCesiumColorGradient(numSegments, startColor, endColor);
+        console.log(colorGradient[0]);
+
         // 读取center1.txt文件并加载数据为点数据几何对象
         fetch('./flood/clearcenter1.txt')
             .then(response => response.text())
@@ -86,21 +94,23 @@
 
                     // 创建点数据几何对象
                     if (Number(height) >= 1) {
-                        var pos = Cesium.Cartographic.fromDegrees(longitude, latitude);
-                        Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, [pos]).then(updates => {
-                            console.log(updates);
-                            const point = viewer.entities.add({
-                                position: Cesium.Cartesian3.fromDegrees(Number(longitude), Number(latitude), Number(height) + updates[0]['height']),
-                                point: {
-                                    pixelSize: 1,
-                                    color: Cesium.Color.RED,
-                                    // outlineColor: Cesium.Color.WHITE,
-                                    // outlineWidth: 2
-                                },
-                                // 设置高度参考为相对于地形表面
-                                heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-                            });
-                        })
+                        // var pos = Cesium.Cartographic.fromDegrees(longitude, latitude);
+                        // Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, [pos]).then(updates => {
+                        //     console.log(updates);
+                        // var updates[0]['height'] = 60;
+                        const point = viewer.entities.add({
+                            position: Cesium.Cartesian3.fromDegrees(Number(longitude), Number(latitude), Number(height) + 60),
+                            point: {
+                                pixelSize: 5,
+                                // color: Cesium.Color.RED,
+                                color: colorGradient[getIntervalIndex(height)]
+                                // outlineColor: Cesium.Color.WHITE,
+                                // outlineWidth: 2
+                            },
+                            // 设置高度参考为相对于地形表面
+                            heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+                        });
+                        // })
                     }
                     // 可以根据需要给每个点添加其他属性或操作
                     // point.name = 'Some name';
@@ -109,10 +119,7 @@
             });
 
 
-        // 生成Cesium颜色渐变数组，从浅蓝色到深蓝色
-        const numSegments = 5;
-        const startColor = "rgb(135, 206, 235)";
-        const endColor = "rgb(0, 0, 128)";
+
 
         function generateCesiumColorGradient(numSegments, startColor, endColor) {
             // 将RGB颜色转换为Cesium颜色
@@ -138,9 +145,6 @@
 
             return gradientColors;
         }
-
-        const colorGradient = generateCesiumColorGradient(numSegments, startColor, endColor);
-        console.log(colorGradient);
 
 
         function getIntervalIndex(H) {
