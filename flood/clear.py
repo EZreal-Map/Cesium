@@ -18,7 +18,8 @@ def read_and_filter_data(input_file, output_file, threshold):
                         deleted_data.append(line)
                 except ValueError:
                     print(f"Error: Invalid data format in line: {line}")
-
+    kept_data[-1] = kept_data[-1].rstrip('\n') # 移除末尾的换行符
+    # print(kept_data[-1])  
     with open(output_file, 'w') as f:
         f.writelines(kept_data)
 
