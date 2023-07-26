@@ -1,5 +1,6 @@
 import os
 import time
+from pyproj import Proj
 
 def get_subdirectories(directory_path):
     subdirectories = [name for name in os.listdir(directory_path) if os.path.isdir(os.path.join(directory_path, name))]
@@ -30,11 +31,13 @@ def read_data_between_brackets(file_path):
                 inside_brackets = True
     return data
 
-def read_center_data(center_file_path):
+def read_center_data(center_file_path,transform=None):
     with open(center_file_path, 'r') as center_file:
         center_data = []
         for line in center_file:
             longitude, latitude, _, radius = line.strip().split(',')
+            if(transform):
+                longitude, latitude = transform(longitude, latitude, inverse=True)
             center_data.append((longitude, latitude, radius))
     return center_data
 
@@ -62,15 +65,22 @@ center_file_path = os.path.join(directory_path, sorted_subdirectories[0], 'cente
 subcontent_file_path = os.path.join(directory_path, sorted_subdirectories[0], 'subcontent.txt')
 # 调用函数，将子目录名称写入 subcontent.txt 文件
 write_subdirectories_to_file(sorted_subdirectories[1:], subcontent_file_path) 
+
+# 定义一个UTM投影坐标系统，用做center.txt坐标（utm113）转换为经纬度坐标
+utm113 = Proj("+proj=tmerc +lon_0=113.35 +y_0=0 +x_0=500000 +ellps=IAU76 \
++towgs84=-7.849095,18.661172,12.682502,0.809388,-1.667217,-56.719783,-3.30421e-007 +units=m +no_defs")
+
+center_data = read_center_data(center_file_path,utm113) # 关键数据 经纬度+半径
+# 计数:写入第count个文件
 count = 1;
 for directory in sorted_subdirectories[1:]:
     H_file_path = os.path.join(directory_path,  directory, 'H')
     S_file_path = os.path.join(directory_path, directory, 'S')
     LLRHD_file_path = os.path.join(directory_path, directory, 'LLRHD.txt')
 
-    H_data = read_data_between_brackets(H_file_path)
-    S_data = read_data_between_brackets(S_file_path)
-    center_data = read_center_data(center_file_path)
+    H_data = read_data_between_brackets(H_file_path) # 关键数据 水深
+    S_data = read_data_between_brackets(S_file_path) # 关键数据 DEM
+    
     save_LLHRD_data(directory, LLRHD_file_path, H_data, S_data, center_data)
     print(f'当前正在写入第{count}/{len(sorted_subdirectories[1:])}个文件夹')
     count+=1
@@ -84,4 +94,4 @@ print(f"运行完成：一共写入{count-1}个文件夹,在每一文件夹内�
 print("代码运行时间为：", execution_time, "秒")
 
 # 运行完成：一共写入175个文件夹,在每一文件夹内生成一个LLRHD.txt,每个文件包含526318个数据
-# 代码运行时间为： 244.66122603416443 秒
+# 代码运行时间为： 309.91260170936584 秒
