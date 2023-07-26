@@ -40,6 +40,8 @@ subdirectories = get_subdirectories(directory_path)
 # 按照数字大小排序
 sorted_subdirectories = sorted(subdirectories, key=lambda x: int(x))
 center_file_path = os.path.join(directory_path, sorted_subdirectories[0], 'center.txt')
+
+threshold = 0.1  #阈值
 count = 1;
 for directory in sorted_subdirectories[1:]:
     input_file = os.path.join(directory_path, directory, 'LLRHD.txt')
@@ -47,8 +49,6 @@ for directory in sorted_subdirectories[1:]:
     # 如果生成文件的名字取错了，可以通过这个自动删除文件
     # file_path_to_delete = os.path.join(directory_path, directory, 'afterClear_LLRHD.txt')
     # os.remove(file_path_to_delete)
-    threshold = 0.01  #阈值
-
     deleted_count, kept_count, kept_data = read_and_filter_data(input_file, output_file, threshold) #调用主函数
 
     # 打印结果
