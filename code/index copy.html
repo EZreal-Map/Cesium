@@ -5,8 +5,8 @@
     <title>张家板桥</title>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
-    <link rel="stylesheet" type="text/css" href="./Cesium-1.96/Build/Cesium/Widgets/widgets.css">
-    <script type="text/javascript" src="./Cesium-1.96/Build/Cesium/Cesium.js"></script>
+    <link rel="stylesheet" type="text/css" href="../Cesium-1.96/Build/Cesium/Widgets/widgets.css">
+    <script type="text/javascript" src="../Cesium-1.96/Build/Cesium/Cesium.js"></script>
     <style>
         html,
         body,
@@ -102,25 +102,25 @@
 
         const colorGradient = generateCesiumColorGradient(numSegments, startColor, endColor);
         // console.log(colorGradient[0]);
-        let directory = './flood/30jiami/';
+        let directory = '../flood/30jiami/';
         // let subcontent
         fetch(directory + '0/subcontent.txt')
-    .then(response => response.text())
-    .then(data => {
-        const lines = data.split('\n').map(line => line.trim());
-        let subcontent = lines.map(Number);
-        console.log(subcontent);
+            .then(response => response.text())
+            .then(data => {
+                const lines = data.split('\n').map(line => line.trim());
+                let subcontent = lines.map(Number);
+                console.log(subcontent);
 
-        // Define a function to fetch data for a given subcontent index
-        async function fetchDataForIndex(index) {
-            try {
-                const response = await fetch(directory + subcontent[index] + '/clearLLRHD.txt');
-                const data = await response.text();
-                const lines = data.split('\n');
-                let count = 1;
+                // Define a function to fetch data for a given subcontent index
+                async function fetchDataForIndex(index) {
+                    try {
+                        const response = await fetch(directory + subcontent[index] + '/clearLLRHD.txt');
+                        const data = await response.text();
+                        const lines = data.split('\n');
+                        let count = 1;
 
-                for (const line of lines) {
-                    let [longitude, latitude, radius, height, dem] = line.split(',');
+                        for (const line of lines) {
+                            let [longitude, latitude, radius, height, dem] = line.split(',');
                             longitude = Number(longitude);
                             latitude = Number(latitude);
                             radius = Number(radius);
@@ -149,13 +149,13 @@
                                 });
                             }
                         }
-                }
+                    }
 
                 console.log(`Processed subcontent[${index}]. Count: ${count}`);
-            } catch (error) {
-                console.error('出错:', error);
+                } catch (error) {
+                    console.error('出错:', error);
+                }
             }
-        }
 
         // Loop through subcontent and fetch data for each index
         for (let i = 0; i < subcontent.length; i++) {
@@ -164,7 +164,7 @@
     })
 
 
-        
+
 
 
 

@@ -39,7 +39,7 @@ def read_and_statistics_data(input_file, threshold, count_array):
 # 记录开始时间
 start_time = time.time()
 # 替换为你的大文件夹路径
-directory_path = './flood/30jiami'
+directory_path = '../flood/30jiami'
 subdirectories = get_subdirectories(directory_path)
 # 按照数字大小排序
 sorted_subdirectories = sorted(subdirectories, key=lambda x: int(x))

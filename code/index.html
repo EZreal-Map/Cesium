@@ -5,8 +5,8 @@
     <title>张家板桥</title>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
-    <link rel="stylesheet" type="text/css" href="./Cesium-1.96/Build/Cesium/Widgets/widgets.css">
-    <script type="text/javascript" src="./Cesium-1.96/Build/Cesium/Cesium.js"></script>
+    <link rel="stylesheet" type="text/css" href="../Cesium-1.96/Build/Cesium/Widgets/widgets.css">
+    <script type="text/javascript" src="../Cesium-1.96/Build/Cesium/Cesium.js"></script>
     <style>
         html,
         body,
@@ -102,7 +102,7 @@
 
         const colorGradient = generateCesiumColorGradient(numSegments, startColor, endColor);
         // console.log(colorGradient[0]);
-        let directory = './flood/30jiami/';
+        let directory = '../flood/30jiami/';
         // let subcontent
         fetch(directory + '0/subcontent.txt')
             .then(response => response.text())
@@ -114,69 +114,69 @@
                 // 读取center1.txt文件并加载数据为点数据几何对象
                 return fetch(directory + subcontent[50] + '/clearLLRHD.txt');  //修改这里，换不同文件夹 subcontent[index]
             })
-                    .then(response => response.text())
-                    .then(data => {
-                        const lines = data.split('\n');
-                        let count = 1;
-                        for (const line of lines) {
-                            let [longitude, latitude, radius, height, dem] = line.split(',');
-                            longitude = Number(longitude);
-                            latitude = Number(latitude);
-                            radius = Number(radius);
-                            height = Number(height);
-                            dem = Number(dem);
-                            // 创建点数据几何对象
-                            if (height >= 0.01) {
-                                count += 1;
-                                // 定义圆的半径（单位为米）
-                                // var radius = 7;
-                                // let topRadius = 7;
-                                // let bottomRadius = 7;
-                                // radius = 7;
-                                let topRadius = radius;
-                                let bottomRadius = radius;
-                                // 定义圆的高度（相对于地形表面的高度，单位为米）
-                                var circleheight = height + dem;
+            .then(response => response.text())
+            .then(data => {
+                const lines = data.split('\n');
+                let count = 1;
+                for (const line of lines) {
+                    let [longitude, latitude, radius, height, dem] = line.split(',');
+                    longitude = Number(longitude);
+                    latitude = Number(latitude);
+                    radius = Number(radius);
+                    height = Number(height);
+                    dem = Number(dem);
+                    // 创建点数据几何对象
+                    if (height >= 0.01) {
+                        count += 1;
+                        // 定义圆的半径（单位为米）
+                        // var radius = 7;
+                        // let topRadius = 7;
+                        // let bottomRadius = 7;
+                        // radius = 7;
+                        let topRadius = radius;
+                        let bottomRadius = radius;
+                        // 定义圆的高度（相对于地形表面的高度，单位为米）
+                        var circleheight = height + dem;
 
-                                // 定义圆的中心位置
-                                // var center = Cesium.Cartesian3.fromDegrees(longitude, latitude);
-                                // 使用投影坐标创建Cartesian3对象
-                                // var center = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(longitude), Cesium.Math.toDegrees(latitude));
+                        // 定义圆的中心位置
+                        // var center = Cesium.Cartesian3.fromDegrees(longitude, latitude);
+                        // 使用投影坐标创建Cartesian3对象
+                        // var center = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(longitude), Cesium.Math.toDegrees(latitude));
 
-                                // // 创建圆实体
-                                // var circleEntity = viewer.entities.add({
-                                //     position: center,
-                                //     ellipse: {
-                                //         semiMinorAxis: radius,
-                                //         semiMajorAxis: radius,
-                                //         material: colorGradient[getIntervalIndex(height)],
-                                //         height: circleheight
-                                //     }
-                                // });
-                                // // 创建圆柱体
-                                var cylinderEntity = viewer.entities.add({
-                                    name: 'Cylinder',
-                                    position: Cesium.Cartesian3.fromDegrees(longitude, latitude, dem + height / 2), // 设置圆柱体的位置，longitude经度，latitude纬度，height高度
-                                    cylinder: {
+                        // // 创建圆实体
+                        // var circleEntity = viewer.entities.add({
+                        //     position: center,
+                        //     ellipse: {
+                        //         semiMinorAxis: radius,
+                        //         semiMajorAxis: radius,
+                        //         material: colorGradient[getIntervalIndex(height)],
+                        //         height: circleheight
+                        //     }
+                        // });
+                        // // 创建圆柱体
+                        var cylinderEntity = viewer.entities.add({
+                            name: 'Cylinder',
+                            position: Cesium.Cartesian3.fromDegrees(longitude, latitude, dem + height / 2), // 设置圆柱体的位置，longitude经度，latitude纬度，height高度
+                            cylinder: {
 
-                                        length: height, // 圆柱体的长度
-                                        // height: dem + height / 2 + 1000,
-                                        topRadius: topRadius, // 顶部半径
-                                        bottomRadius: bottomRadius, // 底部半径
-                                        // slices: 3,
-                                        material: colorGradient[getIntervalIndex(height)], // 圆柱体的颜色和透明度
-                                        // outline: true, // 是否显示轮廓
-                                        // outlineColor: Cesium.Color.BLACK, // 轮廓的颜色
-                                        // clampToGround: true, // 将实体贴地
-                                        // height: 0, // 设置高度为0，使其贴地
-                                    }
-                                });
+                                length: height, // 圆柱体的长度
+                                // height: dem + height / 2 + 1000,
+                                topRadius: topRadius, // 顶部半径
+                                bottomRadius: bottomRadius, // 底部半径
+                                // slices: 3,
+                                material: colorGradient[getIntervalIndex(height)], // 圆柱体的颜色和透明度
+                                // outline: true, // 是否显示轮廓
+                                // outlineColor: Cesium.Color.BLACK, // 轮廓的颜色
+                                // clampToGround: true, // 将实体贴地
+                                // height: 0, // 设置高度为0，使其贴地
                             }
-                        }
-                        console.log(count);
-                    });
+                        });
+                    }
+                }
+                console.log(count);
+            });
 
-        
+
 
 
 
