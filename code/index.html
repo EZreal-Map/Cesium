@@ -112,7 +112,7 @@
                 console.log(subcontent);
 
                 // 读取center1.txt文件并加载数据为点数据几何对象
-                return fetch(directory + subcontent[50] + '/clearLLRHD.txt');  //修改这里，换不同文件夹 subcontent[index]
+                return fetch(directory + subcontent[1] + '/clearLLRHD.txt');  //修改这里，换不同文件夹 subcontent[index]
             })
             .then(response => response.text())
             .then(data => {
@@ -126,7 +126,7 @@
                     height = Number(height);
                     dem = Number(dem);
                     // 创建点数据几何对象
-                    if (height >= 0.01) {
+                    if (height >= 1) {
                         count += 1;
                         // 定义圆的半径（单位为米）
                         // var radius = 7;
