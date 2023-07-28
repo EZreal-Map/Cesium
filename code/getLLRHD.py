@@ -47,7 +47,7 @@ def read_center_data(center_file_path, transform=None):
     return center_data
 
 
-def save_LLHRD_data(directory, LLRHD_file_path, H_data, S_data, center_data):
+def save_LLHRD_data(LLRHD_file_path, H_data, S_data, center_data):
     with open(LLRHD_file_path, 'w') as LLRHD_file:
         for i, (H_line, S_line, (longitude, latitude, radius)) in enumerate(zip(H_data, S_data, center_data)):
             LLRHD_data = f"{longitude},{latitude},{radius},{H_line},{S_line}"
@@ -79,17 +79,20 @@ utm113 = Proj("+proj=tmerc +lon_0=113.35 +y_0=0 +x_0=500000 +ellps=IAU76 \
 +towgs84=-7.849095,18.661172,12.682502,0.809388,-1.667217,-56.719783,-3.30421e-007 +units=m +no_defs")
 
 center_data = read_center_data(center_file_path, utm113)  # 关键数据 经纬度+半径
+# 因为每个文件夹里面的DEM数据都是不变的，读取一份就行
+S_file_path = os.path.join(directory_path, sorted_subdirectories[1], 'S')
+S_data = read_data_between_brackets(S_file_path)  # 关键数据 DEM
 # 计数:写入第count个文件
 count = 1
 for directory in sorted_subdirectories[1:]:
     H_file_path = os.path.join(directory_path,  directory, 'H')
-    S_file_path = os.path.join(directory_path, directory, 'S')
+    # S_file_path = os.path.join(directory_path, directory, 'S')
     LLRHD_file_path = os.path.join(directory_path, directory, 'LLRHD.txt')
 
     H_data = read_data_between_brackets(H_file_path)  # 关键数据 水深
-    S_data = read_data_between_brackets(S_file_path)  # 关键数据 DEM
+    # S_data = read_data_between_brackets(S_file_path)  # 关键数据 DEM
 
-    save_LLHRD_data(directory, LLRHD_file_path, H_data, S_data, center_data)
+    save_LLHRD_data(LLRHD_file_path, H_data, S_data, center_data)
     print(f'当前正在写入第{count}/{len(sorted_subdirectories[1:])}个文件夹')
     count += 1
 

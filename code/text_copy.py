@@ -1,41 +1,26 @@
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-import random
+import pdal
+import json
 
-# 初始化图形
-fig, ax = plt.subplots()
-bars = ax.bar([], [])
-ax.set_ylim(0, 100)
-ax.set_title('Real-time Bar Chart')
-ax.set_xlabel('Category')
-ax.set_ylabel('Value')
+# 构建 PDAL Pipeline
+pipeline = {
+    "pipeline": [
+        {
+            "type": "readers.text",
+            "filename": "../flood/center1.txt",  # 替换为您的包含真实颜色信息的点云数据文件路径
+            "header": "X Y Z",  # 替换为您的点云数据文件中的列名，包括颜色信息
+            "separator": ","  # 替换为您的点云数据文件中的分隔符，例如空格或逗号
+        },
+        {
+            "type": "writers.las",
+            "filename": "output_point_cloud.las",  # 指定输出的 .LAS 文件路径和名称
+            "minor_version": 2,  # 可选，指定 .LAS 文件的版本号
+            "a_srs": "EPSG:4326"  # 可选，指定点云数据的坐标系
+        }
+    ]
+}
 
-# 更新柱状图的函数
+# 执行 PDAL 转换
+pipeline_str = pdal.pipeline.Pipeline(json.dumps(pipeline))
+pipeline_str.execute()
 
-
-def update_bar_chart(frame):
-    # 这里假设你有一个获取数据的函数或者实时数据源
-    # 在这个示例中，我们随机生成一个包含5个随机值的列表
-    data = [random.randint(0, 100) for _ in range(5)]
-
-    # 清空现有的柱状图
-    ax.clear()
-
-    # 绘制新的柱状图
-    bars = ax.bar(range(len(data)), data)
-
-    # 设置图形属性
-    ax.set_ylim(0, max(data) + 10)
-    ax.set_title('Real-time Bar Chart')
-    ax.set_xlabel('Category')
-    ax.set_ylabel('Value')
-
-    return bars
-
-
-# 创建动画
-ani = FuncAnimation(fig, update_bar_chart, frames=range(10),
-                    interval=1000, repeat=False)
-
-# 显示图形
-plt.show()
+print("Conversion to LAS format completed.")

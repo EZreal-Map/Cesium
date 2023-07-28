@@ -52,8 +52,8 @@
             //     maximumLevel: 18
             // }),
             // terrain: Cesium.Terrain.fromWorldTerrain({
-            //     requestWaterMask: true,
-            //     requestVertexNormals: true,
+            //     // requestWaterMask: true,
+            //     // requestVertexNormals: true,
             // }),
         })
         // viewer.imageryLayers.add(
@@ -112,7 +112,7 @@
                 console.log(subcontent);
 
                 // 读取center1.txt文件并加载数据为点数据几何对象
-                return fetch(directory + subcontent[1] + '/clearLLRHD.txt');  //修改这里，换不同文件夹 subcontent[index]
+                return fetch(directory + subcontent[2] + '/clearLLRHD_0.1.txt');  //修改这里，换不同文件夹 subcontent[index]
             })
             .then(response => response.text())
             .then(data => {
@@ -126,7 +126,7 @@
                     height = Number(height);
                     dem = Number(dem);
                     // 创建点数据几何对象
-                    if (height >= 1) {
+                    if (height >= 5) {
                         count += 1;
                         // 定义圆的半径（单位为米）
                         // var radius = 7;
@@ -179,9 +179,6 @@
 
 
 
-
-
-
         function generateCesiumColorGradient(numSegments, startColor, endColor) {
             // 将RGB颜色转换为Cesium颜色
             function rgbToCesiumColor(r, g, b) {
@@ -211,8 +208,8 @@
         function getIntervalIndex(H) {
             // 区间定义，第一个元素表示最小值，最后一个元素表示无穷大，其他值为各个区间的上限值
             // const intervals = [0, 0.20, 0.50, 1.0, 1.50, 2.0, 2.5, 3, Number.POSITIVE_INFINITY];
-            const intervals = [0, 0.20, 0.50, 1.0, 1.50, 2.0, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, Number.POSITIVE_INFINITY];
-
+            // const intervals = [0, 0.20, 0.50, 1.0, 1.50, 2.0, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, Number.POSITIVE_INFINITY];
+            const intervals = [0, 0.25, 0.50, 1.0, 1.50, 2.0, 2.5, 3, 3.5, 4, 4.5, 5, 7.5, 10, Number.POSITIVE_INFINITY];
             // 检查H是否大于最后一个区间值，如果是，则属于最后一个区间
             if (H > intervals[intervals.length - 1]) {
                 return intervals.length;
